@@ -1,0 +1,39 @@
+
+  <header class="site-header" role="banner">
+    <div class="nav-wrap" role="navigation" aria-label="القائمة الرئيسية">
+      <div class="nav-side" aria-hidden="false">
+        <a class="nav-link" href="index.html">الرئيسية</a>
+        <a class="nav-link" href="/results.html">نتائج المسابقة</a>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="drawer" aria-label="قائمة">
+        <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+
+      <a class="brand" href="#" aria-label="الصفحة الرئيسية">
+        <img src="بخلفية.png" alt="" width="70px">
+        <span class="brand-text">مسابقة جيل الفرقان</span>
+      </a>
+
+      <div class="nav-side" aria-hidden="false">
+        <a class="nav-link" href="sheikh-register.html">تسجيل شيخ مفوض</a>
+        <a class="nav-link" href="sheikh-login.html">دخول شيخ مفوض</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- overlay و drawer في DOM -->
+  <div id="overlay" class="overlay" aria-hidden="true"></div>
+
+  <aside id="drawer" class="drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-label="قائمة التنقل من الأعلى">
+    <div class="head">
+      <button id="drawer-close" class="close" aria-label="إغلاق القائمة">&times;</button>
+    </div>
+
+    <nav class="list" aria-label="روابط القائمة">
+      <a class="link" href="index.html"><strong>الصفحة الرئيسية</strong></a>
+      <a class="link" href="sheikh-register.html"><strong>تسجيل شيخ مفوض</strong></a>
+      <a class="link" href="sheikh-login.html"><strong>دخول شيخ مفوض</strong></a>
+      <a class="link" href="results.html"><strong>نتائج المسابقة</strong></a>
+    </nav>
+  </aside>

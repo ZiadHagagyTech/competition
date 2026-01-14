@@ -1,0 +1,97 @@
+/* نتائج المسابقة - CSS مبسّط مع زر تنزيل */
+:root{
+  --card-radius:12px;
+  --primary: #0b6cf6;
+  --muted: #6b7280;
+  --bg-card: #fff;
+  --danger: #d9534f;
+  --success: #12b76a;
+}
+
+.sheikhs-list{ display:flex; flex-direction:column; gap:1rem; margin-top:1rem; }
+
+.sheikh-card{
+  background: var(--bg-card);
+  border-radius: var(--card-radius);
+  padding:0.9rem;
+  box-shadow: 0 8px 20px rgba(16,24,40,0.06);
+  display:flex;
+  flex-direction:column;
+  gap:0.6rem;
+}
+
+.sheikh-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:0.6rem;
+}
+.sheikh-name{ font-weight:800; color:var(--primary); font-size:1.05rem; }
+.sheikh-meta{ color:var(--muted); font-size:0.92rem; }
+
+.row-actions{ display:flex; gap:0.5rem; align-items:center; }
+
+/* زر تنزيل */
+#exportBtn{
+  background:linear-gradient(90deg,var(--primary),#2ea1ff);
+  color:#fff;
+  border:0;
+  padding:0.5rem 0.75rem;
+  border-radius:8px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* competitors table */
+.competitors-wrap{ overflow:auto; margin-top:0.6rem; }
+.competitors-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:420px;
+}
+.competitors-table th, .competitors-table td{
+  padding:0.55rem 0.5rem;
+  text-align:right;
+  border-bottom:1px solid #f1f5fb;
+  font-size:0.95rem;
+}
+.competitors-table th{ font-weight:700; color:var(--muted); background:transparent; }
+
+.score-input{
+  width:84px;
+  padding:0.35rem 0.4rem;
+  border-radius:8px;
+  border:1px solid #e6eefc;
+  text-align:center;
+}
+
+/* زر الحفظ/تعديل */
+.btn-small{
+  padding:0.45rem 0.6rem;
+  border-radius:8px;
+  border:0;
+  cursor:pointer;
+  font-weight:700;
+  background:var(--primary);
+  color:#fff;
+}
+.btn-small[disabled]{ opacity:0.6; cursor:not-allowed; }
+
+/* حالة "تم الحفظ" مرئية ومغلقة */
+.btn-saved{
+  background: linear-gradient(90deg,#94a3b8,#718096);
+  color:#fff;
+}
+.btn-disabled{
+  opacity:0.6 !important;
+  cursor:not-allowed !important;
+}
+
+/* رسائل وملاحظات */
+.result-meta{ color:var(--muted); font-size:0.95rem; }
+
+@media (max-width:640px){
+  .competitors-table{ min-width:320px; font-size:0.92rem; }
+  .score-input{ width:64px; }
+  .row-actions{ flex-direction:column; align-items:flex-end; gap:0.4rem; }
+}
