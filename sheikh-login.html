@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>دخول شيخ مفوض — جيل الفرقان</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="main.js" defer></script>
+  <script src="session.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+  <div id="navbar-container"></div>
+</header>
+
+  <main class="container page-card">
+    <h1>دخول شيخ مفوض</h1>
+    <p class="muted">سجّل الدخول لتعديل أو عرض بياناتك</p>
+
+    <form id="sheikhLoginForm" class="form-card" novalidate>
+      <label for="sheikhLoginUsername">اسم المستخدم</label>
+      <input id="sheikhLoginUsername" type="text" required placeholder="أدخل اسم المستخدم" />
+      <div class="error" id="sheikhLoginUsernameError"></div>
+
+      <label for="sheikhLoginPassword">كلمة السر</label>
+      <div class="password-row">
+        <input id="sheikhLoginPassword" type="password" required placeholder="أدخل كلمة السر" />
+        <button type="button" id="toggleLoginPassword" class="btn-small">عرض</button>
+      </div>
+      <div class="error" id="sheikhLoginPasswordError"></div>
+
+      <div class="form-actions">
+        <button id="sheikhLoginBtn" type="submit" class="btn primary">دخول</button>
+        <a class="btn outline" href="index.html">عودة</a>
+      </div>
+
+      <div id="sheikhLoginMsg" class="form-msg" aria-live="polite"></div>
+
+      <div id="sheikhProfile" class="profile" style="display:none; margin-top:18px;">
+        <h3 id="welcomeSheikh" style="margin-bottom:6px;"></h3>
+        <p id="profileName"></p>
+        <p id="profilePhone"></p>
+        <p id="profileOffice"></p>
+        <p id="profileCity"></p>
+        <p id="profileUsername"></p>
+
+        <div class="form-actions" style="margin-top:10px;">
+          <button id="addCompetitorsBtn" class="btn primary" style="display:none;">إضافة المتسابقين</button>
+          <button id="sheikhLogoutBtn" class="btn outline" style="display:none; margin-left:0.6rem;">تسجيل خروج</button>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <div class="footer-bottom">
+      <div class="container bottom-inner">
+        <p>حقوق النشر © 2026 — جميع الحقوق محفوظة لــزياد حجاجي</p>
+        <p class="muted small">تم تصميم الموقع وتطويره بواسطة م/ زياد حجاجي  </p>
+      </div>
+    </div>
+
+  <script src="sheikh-login.js" defer></script>
+
+  <script>
+  fetch('navbar.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('navbar-container').innerHTML = data;
+    })
+    .catch(err => console.error('Navbar load error:', err));
+</script>
+
+
+<script>
+  // تحميل النافبار ثم تهيئة drawer
+  async function loadNavbarAndInit() {
+    try {
+      const res = await fetch('navbar.html');
+      const data = await res.text();
+      document.getElementById('navbar-container').innerHTML = data;
+      initDrawer(); // مهم: نروح نهيئ بعد الإدخال
+    } catch (err) {
+      console.error('Navbar load error:', err);
+    }
+  }
+
+  function initDrawer() {
+    const TOGGLE = document.getElementById('nav-toggle');
+    const OVERLAY = document.getElementById('overlay');
+    const DRAWER = document.getElementById('drawer');
+    const CLOSE = document.getElementById('drawer-close');
+    const BREAK = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--breakpoint')) || 980;
+
+    if (!TOGGLE || !OVERLAY || !DRAWER) {
+      console.warn('Drawer init: required elements not found');
+      return;
+    }
+
+    function openDrawer() {
+      DRAWER.classList.add('open');
+      DRAWER.setAttribute('aria-hidden','false');
+      OVERLAY.classList.add('show');
+      OVERLAY.setAttribute('aria-hidden','false');
+      TOGGLE.setAttribute('aria-expanded','true');
+      document.body.style.overflow = 'hidden';
+      const first = DRAWER.querySelector('.link');
+      if (first) first.focus();
+    }
+
+    function closeDrawer(returnFocus = true) {
+      DRAWER.classList.remove('open');
+      DRAWER.setAttribute('aria-hidden','true');
+      OVERLAY.classList.remove('show');
+      OVERLAY.setAttribute('aria-hidden','true');
+      TOGGLE.setAttribute('aria-expanded','false');
+      document.body.style.overflow = '';
+      if (returnFocus) TOGGLE.focus();
+    }
+
+    TOGGLE.addEventListener('click', function () {
+      const isOpen = TOGGLE.getAttribute('aria-expanded') === 'true';
+      if (isOpen) closeDrawer(); else openDrawer();
+    });
+
+    CLOSE && CLOSE.addEventListener('click', function () { closeDrawer(); });
+    OVERLAY.addEventListener('click', function () { closeDrawer(); });
+
+    DRAWER.addEventListener('click', function (e) {
+      const a = e.target.closest('a.link');
+      if (a) {
+        if (window.innerWidth <= BREAK) closeDrawer(false);
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && DRAWER.classList.contains('open')) {
+        closeDrawer();
+      }
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > BREAK) {
+        closeDrawer(false);
+      }
+    });
+
+    // init state
+    if (window.innerWidth > BREAK) {
+      DRAWER.setAttribute('aria-hidden','true');
+      OVERLAY.setAttribute('aria-hidden','true');
+      TOGGLE.setAttribute('aria-expanded','false');
+    } else {
+      DRAWER.setAttribute('aria-hidden','true');
+    }
+  }
+
+  // ابدأ التحميل والتهيئة
+  loadNavbarAndInit();
+</script>
+</body>
+</html>
