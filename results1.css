@@ -1,0 +1,180 @@
+:root{
+  --bg:#f5f9ff;
+  --card:#ffffff;
+  --accent:#0b6cf6;
+  --accent-2:#12b76a;
+  --muted:#6b7280;
+  --danger:#ef4444;
+  --radius:14px;
+  --shadow:0 16px 40px rgba(11,108,246,0.06);
+  --maxwidth:1180px;
+  --gap:20px;
+}
+
+/* Reset & base */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:"Tajawal",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+  background: linear-gradient(180deg,#f8fbff 0%, var(--bg) 100%);
+  color:#07102a;
+  -webkit-font-smoothing:antialiased;
+  -webkit-font-feature-settings: "kern" 1;
+}
+
+/* Ensure images and svgs never exceed their containers */
+img, svg { max-width:100%; height:auto; display:block; }
+
+/* Main container */
+.container{ max-width:var(--maxwidth); margin:20px auto; padding:0 18px; }
+
+/* Header */
+.site-header{
+  padding:14px 0;
+  /* add a bottom padding so main content doesn't stick to navbar */
+  padding-bottom:18px;
+  background:transparent;
+}
+.header-inner{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+.brand{ display:flex; gap:14px; align-items:center; }
+.logo{ width:96px; height:auto; display:block; border-radius:10px; }
+.site-title-wrap .title{ margin:0; font-size:1.05rem; color:var(--accent); font-weight:900; }
+.tagline{ margin:0; font-size:0.86rem; color:var(--muted); }
+
+/* Header actions */
+.header-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; font-weight:800; text-decoration:none; cursor:pointer; border:0;
+}
+.btn.primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff; box-shadow:0 10px 30px rgba(11,108,246,0.12); }
+.btn.ghost{ background:transparent; color:var(--accent); border:1px solid rgba(11,108,246,0.06); }
+.btn.wide{ width:100%; justify-content:center; }
+
+/* Layout */
+.main-grid{ display:grid; grid-template-columns: 1fr 380px; gap:var(--gap); align-items:start; margin-top:28px; /* increased gap from header */ }
+@media (max-width:980px){ .main-grid{ grid-template-columns: 1fr; } }
+
+/* Panels / cards */
+.panel{ background:var(--card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); border:1px solid rgba(11,108,246,0.03); }
+.panel-main{ min-height:300px; margin-top: 25PX; }
+.panel-side{ position:relative; margin-top: 25px; }
+
+/* Panel head */
+.panel-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; flex-wrap:wrap; }
+.panel-head h2, .panel-head h3{ margin:0; font-size:1.05rem; color:#07102a; }
+
+/* Search form */
+.search-form{ display:flex; flex-direction:column; gap:12px; }
+.label{ font-weight:800; color:var(--muted); margin-bottom:6px; }
+
+/* Input row: make flexible and prevent overflow */
+.input-row{
+  display:flex; gap:10px; align-items:center;
+  width:100%;
+  min-width:0; /* important for flex children to shrink */
+}
+.input-row .icon{ width:20px; height:20px; flex:0 0 20px; opacity:0.9; }
+.input-row input{
+  flex:1 1 auto; padding:12px 14px; border-radius:12px; border:1px solid rgba(11,108,246,0.06); font-size:1rem; outline:none;
+  background:linear-gradient(180deg,#ffffff,#fbfdff);
+  min-width:0; /* allow shrinking on small screens */
+  word-break:break-word;
+  overflow-wrap:anywhere;
+}
+.input-row input::placeholder{ color:#9aa7c7; }
+
+/* Search button: prevent making input overflow */
+.search-btn{
+  display:inline-flex; align-items:center; gap:8px; padding:12px 14px; border-radius:12px; border:0; font-weight:900;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff; cursor:pointer;
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+
+/* form meta */
+.form-meta{ display:flex; gap:12px; align-items:center; margin-top:6px; flex-wrap:wrap; }
+.btn.small{ padding:8px 12px; font-size:0.95rem; border-radius:10px; }
+.lookup-msg{ color:var(--muted); font-weight:700; }
+
+/* Results area */
+.results-area{ margin-top:18px; display:flex; flex-direction:column; gap:12px; min-height:80px; }
+
+/* Make result cards responsive and non-overflowing */
+.result-card{
+  display:flex; gap:12px; align-items:center; justify-content:space-between; padding:14px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(11,108,246,0.03), rgba(255,255,255,0.02));
+  border-left:6px solid rgba(11,108,246,0.12);
+  transition:transform .14s ease, box-shadow .14s ease;
+  width:100%;
+  box-sizing:border-box;
+  overflow:hidden; /* prevent child overflow */
+  flex-wrap:wrap; /* allow wrapping of children */
+}
+.result-card:hover{ transform:translateY(-6px); box-shadow:0 24px 60px rgba(11,108,246,0.06); }
+
+/* left column should be allowed to shrink; min-width:0 is essential to avoid overflow in flex */
+.result-left{ flex:1 1 60%; min-width:0; }
+.name-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.name-row h3{ margin:0; font-size:1rem; color:#07102a; font-weight:900; word-break:break-word; overflow-wrap:anywhere; }
+.meta{ color:var(--muted); font-size:0.92rem; margin-top:8px; word-break:break-word; overflow-wrap:anywhere; }
+
+/* score badge: on small screens use full width */
+.score-badge{
+  background:linear-gradient(180deg,var(--accent),var(--accent-2)); color:#fff; padding:10px 16px; border-radius:12px; font-weight:900; min-width:96px; text-align:center;
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+
+/* breakdown chips: allow wrap and shrink */
+.score-breakdown{ display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.small-chip{ background:#fff; border:1px solid rgba(11,108,246,0.04); padding:8px 12px; border-radius:10px; font-weight:800; color:var(--muted); white-space:normal; max-width:100%; word-break:break-word; overflow-wrap:anywhere; }
+
+/* Winners card layout */
+.winners-card{ display:flex; align-items:center; gap:14px; justify-content:space-between; flex-direction:column; }
+.winners-intro{ text-align:right; width:100%; }
+.winners-visual{ width:100%; display:flex; justify-content:center; align-items:center; margin-top:8px; }
+.winners-logo-wrap{
+  width:120px;
+  height:120px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#fff,#fbfdff);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 20px 40px rgba(11,108,246,0.06);
+  border:1px solid rgba(11,108,246,0.04);
+  /* always show on mobiles but scaled down via media query */
+  display:block;
+}
+.winners-logo{ width:88px; height:88px; object-fit:contain; }
+
+/* winners list appended by JS (if data exists) */
+.winners-list{ margin-top:14px; }
+
+/* empty-state */
+.empty-state{ padding:20px; text-align:center; color:var(--muted); background:linear-gradient(180deg,rgba(245,247,250,0.9),transparent); border-radius:12px; overflow-wrap:anywhere; }
+
+/* Footer */
+.site-footer{ margin-top:30px; padding:18px 0; color:var(--muted); text-align:center; }
+
+/* responsiveness: adjust layout and ensure nothing overflows */
+@media (max-width:900px){
+  .header-inner{ flex-direction:column; align-items:flex-start; gap:8px; }
+  .result-left{ flex-basis:100%; }
+  .score-badge{ min-width:0; width:100%; margin-top:10px; }
+  .input-row{ flex-direction:column; align-items:stretch; }
+  .search-btn{ width:100%; }
+}
+
+@media (max-width:520px){
+  .main-grid{ grid-template-columns:1fr; gap:12px; }
+  /* show logo on phones but smaller so it doesn't overflow */
+  .winners-logo-wrap{ width:84px; height:84px; border-radius:12px; }
+  .winners-logo{ width:64px; height:64px; }
+  .result-card{ flex-direction:column; align-items:stretch; }
+  .score-badge{ width:100%; text-align:center; margin-top:10px; }
+  .input-row{ gap:8px; }
+  .input-row input{ font-size:0.98rem; padding:10px; }
+}
+
+/* catch long unbroken sequences (like long numbers or very long names) */
+* { -ms-overflow-style: none; scrollbar-width: none; }

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>قائمة المتسابقين — جيل الفرقان</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="competitors.css" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <!-- هذه الصفحة عامة — اضف هذا قبل تحميل السكربتات المشتركة -->
+  <script>window.PUBLIC_PAGE = true;</script>
+
+  <!-- main.js يجب أن يهيئ firebaseConfig في مشروعك -->
+  <script src="main.js" defer></script>
+  <script src="competitors.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div id="navbar-container"></div>
+  </header>
+
+  <main class="container">
+    <section class="panel top-controls">
+      <div class="controls-row">
+        <h1 class="page-title">قائمة المتسابقين مقسمة حسب الشيوخ</h1>
+        <div class="controls-right">
+          <input id="searchInput" type="search" placeholder="ابحث بالاسم أو الرقم القومي..." aria-label="بحث المتسابقين" />
+          <label for="pageSize" class="sr-only">حد أقصى للعناصر</label>
+          <select id="pageSize" aria-label="حجم العرض">
+            <option value="50">50</option>
+            <option value="100" selected>100</option>
+            <option value="9999">الكل</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="listNotice" class="muted small"></div>
+    </section>
+
+    <section class="panel table-panel">
+      <div id="tableWrap" class="table-wrap" aria-live="polite">
+        <!-- سيتم عرض المجموعات هنا: لكل شيخ قسم ثم بطاقات المتسابقين (مضغوط افتراضيًا) -->
+      </div>
+    </section>
+  </main>
+
+  <!-- image modal with pan & zoom (كما في النسخة السابقة) -->
+  <div id="imgModal" class="modal-backdrop" style="display:none;" role="dialog" aria-modal="true" aria-label="صورة المتسابق">
+    <div class="modal" role="document">
+      <div class="modal-toolbar" aria-hidden="false">
+        <button id="imgZoomOut" class="btn ghost" title="تصغير">-</button>
+        <button id="imgZoomReset" class="btn ghost" title="إعادة">إعادة</button>
+        <button id="imgZoomIn" class="btn ghost" title="تكبير">+</button>
+        <button id="imgClose" class="btn primary" style="margin-left:auto">إغلاق</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-image-wrap" id="modalImageWrap">
+          <img id="modalImg" src="" alt="صورة كبيرة" draggable="false"/>
+        </div>
+        <div id="modalCaption" class="muted small"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-bottom">
+      <div class="container bottom-inner">
+        <div class="footer-text">
+          <p>حقوق النشر © 2026 — جيل الفرقان</p>
+          <p class="muted small">تم تصميم الموقع وتطويره بواسطة م/ زياد حجاجي</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    fetch('navbar.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('navbar-container').innerHTML = data;
+      })
+      .catch(err => console.error('Navbar load error:', err));
+  </script>
+
+  <script>
+    async function loadNavbarAndInit() {
+      try {
+        const res = await fetch('navbar.html');
+        const data = await res.text();
+        document.getElementById('navbar-container').innerHTML = data;
+        initDrawer();
+      } catch (err) {
+        console.error('Navbar load error:', err);
+      }
+    }
+
+    function initDrawer() {
+      const TOGGLE = document.getElementById('nav-toggle');
+      const OVERLAY = document.getElementById('overlay');
+      const DRAWER = document.getElementById('drawer');
+      const CLOSE = document.getElementById('drawer-close');
+      const BREAK = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--breakpoint')) || 980;
+
+      if (!TOGGLE || !OVERLAY || !DRAWER) {
+        console.warn('Drawer init: required elements not found');
+        return;
+      }
+
+      function openDrawer() {
+        DRAWER.classList.add('open');
+        DRAWER.setAttribute('aria-hidden','false');
+        OVERLAY.classList.add('show');
+        OVERLAY.setAttribute('aria-hidden','false');
+        TOGGLE.setAttribute('aria-expanded','true');
+        document.body.style.overflow = 'hidden';
+        const first = DRAWER.querySelector('.link');
+        if (first) first.focus();
+      }
+
+      function closeDrawer(returnFocus = true) {
+        DRAWER.classList.remove('open');
+        DRAWER.setAttribute('aria-hidden','true');
+        OVERLAY.classList.remove('show');
+        OVERLAY.setAttribute('aria-hidden','true');
+        TOGGLE.setAttribute('aria-expanded','false');
+        document.body.style.overflow = '';
+        if (returnFocus) TOGGLE.focus();
+      }
+
+      TOGGLE.addEventListener('click', function () {
+        const isOpen = TOGGLE.getAttribute('aria-expanded') === 'true';
+        if (isOpen) closeDrawer(); else openDrawer();
+      });
+
+      CLOSE && CLOSE.addEventListener('click', function () { closeDrawer(); });
+      OVERLAY.addEventListener('click', function () { closeDrawer(); });
+
+      DRAWER.addEventListener('click', function (e) {
+        const a = e.target.closest('a.link');
+        if (a) {
+          if (window.innerWidth <= BREAK) closeDrawer(false);
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && DRAWER.classList.contains('open')) {
+          closeDrawer();
+        }
+      });
+
+      window.addEventListener('resize', function () {
+        if (window.innerWidth > BREAK) {
+          closeDrawer(false);
+        }
+      });
+
+      if (window.innerWidth > BREAK) {
+        DRAWER.setAttribute('aria-hidden','true');
+        OVERLAY.setAttribute('aria-hidden','true');
+        TOGGLE.setAttribute('aria-expanded','false');
+      } else {
+        DRAWER.setAttribute('aria-hidden','true');
+      }
+    }
+
+    loadNavbarAndInit();
+
+    // تعطيل الزر الأيمن واختصارات معينة
+    document.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) || (e.ctrlKey && e.key === "U")) {
+          e.preventDefault();
+      }
+    });
+  </script>
+</body>
+</html>
