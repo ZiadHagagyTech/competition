@@ -294,13 +294,13 @@ const IMGBB_API_KEY = '4b4e76113a94e13e2fab955835a7be52'; // اتركه فارغ
           LEVELS.QURAN_KAMEL_RIWAIA
         ];
       }
-      if (t >= dStart(2009,1,1).getTime() && t <= dEnd(2009,12,31).getTime()) {
+      if (t >= dStart(2008,1,1).getTime() && t <= dEnd(2009,12,31).getTime()) {
         return [
           LEVELS.QURAN_KAMEL,
           LEVELS.QURAN_KAMEL_RIWAIA
         ];
       }
-      if (t >= dStart(2008,1,1).getTime() && t <= dEnd(2008,12,31).getTime()) {
+      if (t >= dStart(2006,1,1).getTime() && t <= dEnd(2007,12,31).getTime()) {
         return [
           LEVELS.QURAN_KAMEL_RIWAIA
         ];
@@ -703,4 +703,5 @@ const IMGBB_API_KEY = '4b4e76113a94e13e2fab955835a7be52'; // اتركه فارغ
     });
 
   }); // DOMContentLoaded
+
 })();
